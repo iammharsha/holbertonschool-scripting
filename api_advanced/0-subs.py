@@ -7,6 +7,7 @@ in a given subreddit
 
 import requests
 
+
 def number_of_subscribers(subreddit):
     """
     Function to get number of subscribers in a subreddit
@@ -35,5 +36,4 @@ def number_of_subscribers(subreddit):
         else:
             return 0
     except requests.exceptions.JSONDecodeError:
-            return 0
-
+        return 0

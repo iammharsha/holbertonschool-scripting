@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 """
 Query Reddit API
-to print titles of top 10 hot posts
+returns a list containing the titles of all hot articles
 for a given subreddit
 """
 
 import requests
 
 
-def top_ten(subreddit):
+def recurse(subreddit, hot_list=[], after=None):
     """
     Function to print titles of top 10 hot posts in a subreddit
 
@@ -16,27 +16,31 @@ def top_ten(subreddit):
         subreddit (string): Name of subreddit
     """
 
-    url = f"https://www.reddit.com/r/{subreddit}/hot.json?limit=10"
+    url = f"https://www.reddit.com/r/{subreddit}/hot.json"
     headers = {
         "User-Agent": "Harsha"
+    }
+    params = {
+        "limit": 100,
+        "after": after
     }
     try:
         response = requests.get(
             url,
             headers=headers,
+            params=params,
             allow_redirects=False,
         )
 
         if response.status_code == 200:
             data = response.json()
             posts = data['data']['children']
-
-            if posts:
-                for post in posts:
-                    print(post['data']['title'])
+            hot_list.extend([post['data']['title'] for post in posts])
+            if after:
+                return recurse(subreddit, hot_list, after)
             else:
-                print(None)
+                return hot_list
         else:
-            print(None)
+            return None
     except requests.exceptions.RequestException:
-        print(None)
+        return None
